@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <!-- Add any necessary CSS or Bootstrap links here -->
+    <!-- For example: -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add your CSS styles here */
+        /* Example styles for chat messages */
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .chat-box {
+            background-color: #f2f2f2;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        /* You can add more styles for input, buttons, etc. */
+    </style>
+</head>
+<body>
+    <div class="container chat-container">
+        <div id="chat-box"></div>
+        <form id="message-form">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <!-- Add your JavaScript code here -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // JavaScript for sending and displaying chat messages
+        $(document).ready(function() {
+            $("#message-form").submit(function(event) {
+                event.preventDefault();
+                const userInput = $("#user-input").val();
+                addUserMessage(userInput);
+                // Send user input to the server using AJAX (you need to handle this in your Flask app)
+                $.ajax({
+                    type: "POST",
+                    url: "/get",  // Specify your Flask route for handling messages
+                    data: { msg: userInput },
+                    success: function(response) {
+                        addBotMessage(response.response); // Assuming the response is in JSON format
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error); // Handle errors gracefully
+                    }
+                });
+                $("#user-input").val(""); // Clear input field after sending message
+            });
+        });
+
+        function addUserMessage(message) {
+            $("#chat-box").append('<div class="chat-box">You: ' + message + '</div>');
+        }
+
+        function addBotMessage(message) {
+            $("#chat-box").append('<div class="chat-box">Bot: ' + message + '</div>');
+        }
+    </script>
+</body>
+</html>
